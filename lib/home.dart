@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'add_item.dart';
 import 'item.dart';
 import 'search.dart';
 import 'add_category.dart'; // Import the necessary files for Add Category and Add Products
@@ -69,7 +68,7 @@ class _HomeState extends State<Home> {
             onPressed: () {
               setState(() {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const AddItem()),
+                  MaterialPageRoute(builder: (context) => const AddCategory()),
                 );
               });
             },

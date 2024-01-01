@@ -9,55 +9,90 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  // controller to store product pid
-  final TextEditingController _controllerID = TextEditingController();
-  String _text = ''; // displays product info or error message
+  final TextEditingController _productIdController = TextEditingController();
+  String _productInfo = '';
 
   @override
   void dispose() {
-    _controllerID.dispose();
+    _productIdController.dispose();
     super.dispose();
   }
 
-  // update product info or display error message
-  void update(String text) {
+  void updateProductInfo(String text) {
     setState(() {
-      _text = text;
+      _productInfo = text;
     });
   }
 
-  // called when user clicks on the find button
   void getProduct() {
     try {
-      int pid = int.parse(_controllerID.text);
-      searchProduct(update, pid); // search asynchronously for product record
+      int productId = int.parse(_productIdController.text);
+      searchProduct(updateProductInfo, productId);
+    } catch (e) {
+      showSnackBar('Invalid input. Please enter a valid product ID.');
     }
-    catch(e) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('wrong arguments')));
-    }
+  }
+
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Page 1'),
+        title: const Text('Product Search'),
         centerTitle: true,
       ),
-      body: Center(child: Column(children: [
-        const SizedBox(height: 10),
-        SizedBox(width: 200, child: TextField(controller: _controllerID, keyboardType: TextInputType.number,
-            decoration: const InputDecoration(border: OutlineInputBorder(), hintText: 'Enter ID'))),
-        const SizedBox(height: 10),
-        ElevatedButton(onPressed: getProduct,
-            child: const Text('Find', style: TextStyle(fontSize: 18))),
-        const SizedBox(height: 10),
-        Center(child: SizedBox(width: 200, child: Flexible(child: Text(_text,
-            style: const TextStyle(fontSize: 18))))),
-      ],
-
-      ),
-
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _productIdController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Product ID',
+                  hintText: 'Enter Product ID',
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: getProduct,
+                child: const Text('Find', style: TextStyle(fontSize: 18)),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  _productInfo,
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

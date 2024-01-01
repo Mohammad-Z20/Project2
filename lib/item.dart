@@ -1,11 +1,12 @@
 import 'dart:convert' as convert;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-// main URL for REST pages
+import 'add_category.dart';
+import 'home.dart';
+import 'search.dart';
+
 const String _baseURL = 'mohammadzahran.000webhostapp.com';
 
-// class to represent a row from the products table
-// note: cid is replaced by category name
 class Item {
   int _id;
   String _name;
@@ -16,80 +17,110 @@ class Item {
 
   @override
   String toString() {
-    return 'PID: $_id Name: $_name  Price: \$$_price Category: $_category';
-  }
-}
-// list to hold products retrieved from getProducts
-List<Item> _items = [];
-// asynchronously update _products list
-void updateProducts(Function(bool success) update) async {
-  try {
-    final url = Uri.https(_baseURL, 'getItems.php');
-    final response = await http.get(url)
-        .timeout(const Duration(seconds: 5)); // max timeout 5 seconds
-    _items.clear(); // clear old products
-    if (response.statusCode == 200) { // if successful call
-      final jsonResponse = convert.jsonDecode(response.body); // create dart json object from json array
-      for (var row in jsonResponse) { // iterate over all rows in the json array
-        Item i = Item( // create a product object from JSON row object
-            int.parse(row['id']),
-            row['name'],
-            double.parse(row['price']),
-            row['category']);
-        _items.add(i); // add the product object to the _products list
-      }
-      update(true); // callback update method to inform that we completed retrieving data
-    }
-  }
-  catch(e) {
-    update(false); // inform through callback that we failed to get data
+    return 'Product ID: $_id\nName: $_name\nPrice: \$$_price\nCategory: $_category';
   }
 }
 
-// searches for a single product using product pid
+List<Item> _items = [];
+
+void updateProducts(Function(bool success) update) async {
+  try {
+    final url = Uri.https(_baseURL, 'getItems.php');
+    final response = await http.get(url).timeout(const Duration(seconds: 5));
+
+    _items.clear();
+    if (response.statusCode == 200) {
+      final jsonResponse = convert.jsonDecode(response.body);
+      for (var row in jsonResponse) {
+        Item i = Item(
+          int.parse(row['id']),
+          row['name'],
+          double.parse(row['price']),
+          row['category'],
+        );
+        _items.add(i);
+      }
+      update(true);
+    }
+  } catch (e) {
+    update(false);
+  }
+}
+
 void searchProduct(Function(String text) update, int pid) async {
   try {
-    final url = Uri.https(_baseURL, 'searchItem.php', {'pid':'$pid'});
-    final response = await http.get(url)
-        .timeout(const Duration(seconds: 5));
+    final url = Uri.https(_baseURL, 'searchItem.php', {'pid': '$pid'});
+    final response = await http.get(url).timeout(const Duration(seconds: 5));
+
     _items.clear();
     if (response.statusCode == 200) {
       final jsonResponse = convert.jsonDecode(response.body);
       var row = jsonResponse[0];
       Item i = Item(
-          int.parse(row['id']),
-          row['name'],
-          double.parse(row['price']),
-          row['category']);
+        int.parse(row['id']),
+        row['name'],
+        double.parse(row['price']),
+        row['category'],
+      );
       _items.add(i);
       update(i.toString());
     }
-  }
-  catch(e) {
-    update("can't load data");
+  } catch (e) {
+    update("Can't load data");
   }
 }
 
-// shows products stored in the _products list as a ListView
 class ShowItems extends StatelessWidget {
-  const ShowItems({super.key});
+  const ShowItems({Key? key});
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    return ListView.builder(
+    return Container(
+      color: Colors.cyan,
+      child: ListView.builder(
         itemCount: _items.length,
         itemBuilder: (context, index) {
-          return Column(children: [
-            const SizedBox(height: 5),
-            Row(children: [
-              SizedBox(width: width * 0.3),
-              SizedBox(width: width * 0.5, child:
-              Flexible(child: Text(_items[index].toString(),
-                  style: const TextStyle(fontSize: 18)))),
-            ]),
-            const SizedBox(height: 5)
-          ]);
-        });
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            child: Card(
+              elevation: 3,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(15),
+                title: Text(
+                  _items[index]._name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Price: \$${_items[index]._price.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Category: ${_items[index]._category}',
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
