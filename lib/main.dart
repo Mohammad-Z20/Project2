@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'csci410 week 11',
+        title: 'Zizo Techh',
         home: Login());
   }
 }
