@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
-import 'dart:convert'; // Import this for decoding base64 string
-import 'dart:typed_data'; // Import this for Uint8List
+import 'dart:convert';
+import 'dart:typed_data';
 import 'home.dart';
 import 'add_category.dart';
 
@@ -31,7 +31,7 @@ class _LoginState extends State<Login> {
     } else {
       try {
         final success = await _encryptedData.setString('myKey', _keyController.text);
-        // You can save the user name as well if needed
+
         await _encryptedData.setString('userName', _userNameController.text);
         _update(success);
       } catch (e) {

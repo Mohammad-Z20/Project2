@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'item.dart';
 import 'search.dart';
-import 'add_category.dart'; // Import the necessary files for Add Category and Add Products
+import 'add_category.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -62,7 +62,7 @@ class _HomeState extends State<Home> {
                 );
               });
             },
-            icon: const Icon(Icons.add_circle), // Example icon for Add Category
+            icon: const Icon(Icons.add_circle),
           ),
           IconButton(
             onPressed: () {
@@ -72,7 +72,7 @@ class _HomeState extends State<Home> {
                 );
               });
             },
-            icon: const Icon(Icons.add), // Example icon for Add Products
+            icon: const Icon(Icons.add),
           ),
         ],
         title: const Text('Available Products'),

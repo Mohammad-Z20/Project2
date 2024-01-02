@@ -6,10 +6,10 @@ import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
-// Domain of your server
+
 const String _baseURL = 'https://mohammadzahran.000webhostapp.com/';
 
-// Used to retrieve the key later
+
 EncryptedSharedPreferences _encryptedData = EncryptedSharedPreferences();
 
 class AddCategory extends StatefulWidget {
@@ -57,7 +57,7 @@ class _AddCategoryState extends State<AddCategory> {
         centerTitle: true,
       ),
       body: Container(
-        color: Colors.cyan, // Set the background color to cyan
+        color: Colors.cyan,
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -150,12 +150,12 @@ class _AddCategoryState extends State<AddCategory> {
   }
 }
 
-// Below function sends the cid, name, and key using http post to the REST service
+
 void saveCategory(Function(String text) update, int cid, String name) async {
   try {
-    // We need to first retrieve and decrypt the key
+
     String myKey = await _encryptedData.getString('myKey');
-    // Send a JSON object using http post
+
     final response = await http.post(
       Uri.parse('$_baseURL/save.php'),
       headers: <String, String>{
@@ -168,7 +168,7 @@ void saveCategory(Function(String text) update, int cid, String name) async {
       }),
     ).timeout(const Duration(seconds: 5));
     if (response.statusCode == 200) {
-      // If successful, call the update function
+
       update(response.body);
     }
   } catch (e) {
